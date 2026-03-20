@@ -2,17 +2,23 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 
+// Conectar a mongoose
+const mongoose = require("mongoose");
+
 const app = express();
 
 // Establecer puerto
 const { PORT = 3000 } = process.env;
 
 const users = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "users.json"))
+  fs.readFileSync(path.join(__dirname, "data", "users.json")),
 );
 const cards = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "cards.json"))
+  fs.readFileSync(path.join(__dirname, "data", "cards.json")),
 );
+
+//Dirección MongoDB
+mongoose.connect("mongodb://localhost:27017/aroundb");
 
 // Ruta básica
 app.get("/", (req, res) => {
