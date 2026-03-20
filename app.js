@@ -8,10 +8,10 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 const users = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "users.json"))
+  fs.readFileSync(path.join(__dirname, "data", "users.json")),
 );
 const cards = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "cards.json"))
+  fs.readFileSync(path.join(__dirname, "data", "cards.json")),
 );
 
 // Ruta básica
