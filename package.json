@@ -1,7 +1,7 @@
 {
   "name": "web_project_around_express",
   "version": "1.0.0",
-  "description": "",
+  "description": "🗂️ Around the U.S. – Back-End API Este repositorio contiene el back-end de la aplicación Around the U.S., una API REST desarrollada con Node.js y Express. Su función principal es gestionar los datos de usuarios y tarjetas, actuando como capa de comunicación entre el cliente y los recursos almacenados en el servidor.",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -26,7 +26,8 @@
     "nodemon": "^3.1.10"
   },
   "dependencies": {
-    "express": "^5.1.0",
-    "mongoose": "^8.17.0"
-  }
+    "express": "^5.2.1",
+    "mongoose": "^8.23.0"
+  },
+  "keywords": []
 }
