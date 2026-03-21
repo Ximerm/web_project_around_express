@@ -1,22 +1,27 @@
 const express = require("express");
 //Conectar a mongoose
 const mongoose = require("mongoose");
-const fs = require("fs");
-const path = require("path");
 
 const userRoutes = require("./routes/users");
+const cardRoutes = require("./routes/cards");
 
 const app = express();
 app.use(express.json());
+
+//Middleware para la autorización temporal
+app.use((req, res, next) => {
+  req.user = {
+    _id: "69be05942d8934edb58a8a92",
+  };
+
+  next();
+});
 
 // Establecer puerto
 const { PORT = 3000 } = process.env;
 
 app.use("/users", userRoutes);
-
-const cards = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "cards.json")),
-);
+app.use("/cards", cardRoutes);
 
 //Base de datos mongoose
 mongoose
