@@ -35,8 +35,60 @@ const createUser = (req, res) => {
     );
 };
 
+// PATCH /users/me - Actualizar perfil
+const updateProfile = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
+    .orFail(() => {
+      const error = new Error("Usuario no encontrado");
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError")
+        return res.status(400).send({ message: "Datos inválidos" });
+      if (err.statusCode === 404)
+        return res.status(404).send({ message: err.message });
+      return res
+        .status(500)
+        .send({ message: "Error del servidor al actualizar perfil" });
+    });
+};
+
+// PATCH /users/me/avatar - Actualizar avatar
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { new: true, runValidators: true },
+  )
+    .orFail(() => {
+      const error = new Error("Usuario no encontrado");
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError")
+        return res.status(400).send({ message: "URL inválida para avatar" });
+      if (err.statusCode === 404)
+        return res.status(404).send({ message: err.message });
+      return res
+        .status(500)
+        .send({ message: "Error del servidor al actualizar avatar" });
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
+  updateProfile,
+  updateAvatar,
 };

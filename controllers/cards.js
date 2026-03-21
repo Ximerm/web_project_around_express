@@ -58,8 +58,62 @@ const deleteCard = (req, res) => {
     });
 };
 
+// PUT -/cards/:cardId/likes — Dar like a una tarjeta
+const likeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .orFail(() => {
+      const error = new Error("tarjeta no encontrada");
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((card) => res.send(card))
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        return res.status(404).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "ID de tarjeta invalido" });
+      }
+      return res
+        .status(500)
+        .send({ message: "error del servidor al darle like" });
+    });
+};
+
+// DELETE LIKE /cards/:cardId/likes — Dar unlike a una tarjeta
+const dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
+    .orFail(() => {
+      const error = new Error("tarjeta no encontrada");
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((card) => res.send(card))
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        return res.status(404).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "ID de tarjeta invalido" });
+      }
+      return res
+        .status(500)
+        .send({ message: "error del servidor al eliminar el like" });
+    });
+};
+
 module.exports = {
   getCards,
   createCard,
   deleteCard,
+  likeCard,
+  dislikeCard,
 };

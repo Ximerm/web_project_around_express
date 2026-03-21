@@ -1,6 +1,10 @@
 const router = require("express").Router();
 //Se utiliza el modelo y esquema que se creó
 const User = require("../models/user");
+const { updateProfile, updateAvatar } = require("../controllers/users");
+
+router.patch("/me", updateProfile);
+router.patch("/me/avatar", updateAvatar);
 
 //Ruta para todos los usuarios
 router.get("/", (req, res) => {
@@ -36,12 +40,10 @@ router.post("/", (req, res) => {
     .catch((err) => {
       console.error("Error creando usuario:", err);
       if (err.name === "ValidationError") {
-        return res
-          .status(400)
-          .send({
-            message: "Datos de usuario no válidos",
-            details: err.message,
-          });
+        return res.status(400).send({
+          message: "Datos de usuario no válidos",
+          details: err.message,
+        });
       }
       return res
         .status(500)
