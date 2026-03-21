@@ -39,7 +39,6 @@ app.use((req, res) => {
   res.status(404).json({ message: "Recurso solicitado no encontrado" });
 });
 
-// Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}...`);
 });
