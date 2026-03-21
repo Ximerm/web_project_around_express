@@ -1,36 +1,52 @@
 const router = require("express").Router();
-const path = require("path");
-const fs = require("fs");
+//Se utiliza el modelo y esquema que se creó
+const User = require("../models/user");
 
-//Lista JSON de todos los usuarios
+//Ruta para todos los usuarios
 router.get("/", (req, res) => {
-  const usersPath = path.join(__dirname, "..", "data", "users.json");
-  fs.readFile(usersPath, { encoding: "utf8" }, (err, data) => {
-    if (err) {
-      return res
+  User.find({})
+    .then((users) => res.send(users))
+    .catch(() =>
+      res
         .status(500)
-        .send({ message: "An error has occurred on the server" });
-    }
-    return res.send(JSON.parse(data));
-  });
+        .send({ message: "Error del servidor al obtener usuarios" }),
+    );
 });
 
-//Lista JSON con un ID que pasamos después de /users.
-router.get("/:id", (req, res) => {
-  const usersPath = path.join(__dirname, "..", "data", "users.json");
-  fs.readFile(usersPath, { encoding: "utf8" }, (err, data) => {
-    if (err) {
+//Ruta para userId.
+router.get("/:userId", (req, res) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "ID de usuario no encontrado" });
+      }
+      return res.send(user);
+    })
+    .catch(() =>
+      res.status(500).send({ message: "Error del servidor al buscar usuario" }),
+    );
+});
+
+//Ruta para creación de usuario.
+router.post("/", (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((user) => res.status(201).send(user))
+    .catch((err) => {
+      console.error("Error creando usuario:", err);
+      if (err.name === "ValidationError") {
+        return res
+          .status(400)
+          .send({
+            message: "Datos de usuario no válidos",
+            details: err.message,
+          });
+      }
       return res
         .status(500)
-        .send({ message: "An error has occurred on the server" });
-    }
-    const users = JSON.parse(data);
-    const user = users.find((u) => u._id === req.params.id);
-    if (!user) {
-      return res.status(404).send({ message: "User ID not found" });
-    }
-    return res.send(user);
-  });
+        .send({ message: "Error del servidor al crear usuario" });
+    });
 });
 
 module.exports = router;

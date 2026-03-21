@@ -1,33 +1,32 @@
 const express = require("express");
+//Conectar a mongoose
+const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
 
-//Conectar a mongoose
-const mongoose = require("mongoose");
+const userRoutes = require("./routes/users");
 
 const app = express();
+app.use(express.json());
 
 // Establecer puerto
 const { PORT = 3000 } = process.env;
 
-const users = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "data", "users.json")),
-);
+app.use("/users", userRoutes);
+
 const cards = JSON.parse(
   fs.readFileSync(path.join(__dirname, "data", "cards.json")),
 );
 
 //Base de datos mongoose
-mongoose.connect("mongodb://127.0.0.1:27017/aroundb");
+mongoose
+  .connect("mongodb://127.0.0.1:27017/aroundb")
+  .then(() => console.log("Conectado a MongoDB"))
+  .catch((err) => console.error("Error de conexión:", err));
 
 // Ruta básica
 app.get("/", (req, res) => {
   res.send("¡Servidor Express funcionando correctamente!");
-});
-
-app.get("/users", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.json(users);
 });
 
 app.get("/cards", (req, res) => {

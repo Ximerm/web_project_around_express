@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 //Validación datos de link
+
 const urlRegex =
-  /^(https?:\/\/)(www\.)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(\/[a-zA-Z0-9._~:/?%#[\]@!$&'()*+,;=\-]*)?#?$/;
+  /^(https?:\/\/)(www\.)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(?:\/[a-zA-Z0-9._~:/?%#\[\]@!$&'()*+,;=-]*)*#?$/;
 
 const userSchema = new mongoose.Schema({
   name: {
