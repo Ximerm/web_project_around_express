@@ -1,54 +1,17 @@
 const router = require("express").Router();
-//Se utiliza el modelo y esquema que se creó
-const User = require("../models/user");
-const { updateProfile, updateAvatar } = require("../controllers/users");
+const {
+  getUsers,
+  getUserById,
+  createUser,
+  updateProfile,
+  updateAvatar,
+} = require("../controllers/users");
 
+// Todas las rutas delegan la lógica a controladores:
+router.get("/", getUsers);
+router.get("/:userId", getUserById);
+router.post("/", createUser);
 router.patch("/me", updateProfile);
 router.patch("/me/avatar", updateAvatar);
-
-//Ruta para todos los usuarios
-router.get("/", (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch(() =>
-      res
-        .status(500)
-        .send({ message: "Error del servidor al obtener usuarios" }),
-    );
-});
-
-//Ruta para userId.
-router.get("/:userId", (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "ID de usuario no encontrado" });
-      }
-      return res.send(user);
-    })
-    .catch(() =>
-      res.status(500).send({ message: "Error del servidor al buscar usuario" }),
-    );
-});
-
-//Ruta para creación de usuario.
-router.post("/", (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      console.error("Error creando usuario:", err);
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Datos de usuario no válidos",
-          details: err.message,
-        });
-      }
-      return res
-        .status(500)
-        .send({ message: "Error del servidor al crear usuario" });
-    });
-});
 
 module.exports = router;

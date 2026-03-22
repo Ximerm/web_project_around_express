@@ -5,7 +5,7 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(() =>
-      res.status(500).send({ message: "Error al obtener usuarios" }),
+      res.status(500).send({ message: "An error has ocurred on the server" }),
     );
 };
 
@@ -14,11 +14,13 @@ const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "Usuario no encontrado" });
+        return res.status(404).send({ message: "User not found" });
       }
       return res.send(user);
     })
-    .catch(() => res.status(500).send({ message: "Error al buscar usuario" }));
+    .catch(() =>
+      res.status(500).send({ message: "An error has ocurred on the server" }),
+    );
 };
 
 //POST - Crea un nuevo usuario
@@ -29,7 +31,7 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) =>
       res.status(400).send({
-        message: "Datos inválidos para crear un usuario",
+        message: "Invalid user data",
         error: err.message,
       }),
     );
@@ -44,19 +46,19 @@ const updateProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      const error = new Error("Usuario no encontrado");
+      const error = new Error("User not found");
       error.statusCode = 404;
       throw error;
     })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "ValidationError")
-        return res.status(400).send({ message: "Datos inválidos" });
+        return res.status(400).send({ message: "Invalid data" });
       if (err.statusCode === 404)
         return res.status(404).send({ message: err.message });
       return res
         .status(500)
-        .send({ message: "Error del servidor al actualizar perfil" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 
@@ -69,19 +71,19 @@ const updateAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      const error = new Error("Usuario no encontrado");
+      const error = new Error("User not found");
       error.statusCode = 404;
       throw error;
     })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "ValidationError")
-        return res.status(400).send({ message: "URL inválida para avatar" });
+        return res.status(400).send({ message: "Invalid avatar URL" });
       if (err.statusCode === 404)
         return res.status(404).send({ message: err.message });
       return res
         .status(500)
-        .send({ message: "Error del servidor al actualizar avatar" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 

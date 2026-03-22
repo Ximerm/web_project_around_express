@@ -5,9 +5,7 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(() =>
-      res
-        .status(500)
-        .send({ message: "Error del servidor al obtener tarjetas" }),
+      res.status(500).send({ message: "An error has ocurred on the server" }),
     );
 };
 
@@ -19,11 +17,11 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: "Datos de tarjeta no válidos" });
+        return res.status(400).send({ message: "Invalid card data" });
       }
       return res
         .status(500)
-        .send({ message: "Error del servidor al crear tarjeta" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 
@@ -31,18 +29,18 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      const error = new Error("Tarjeta no encontrada");
+      const error = new Error("Card not found");
       error.statusCode = 404;
       throw error;
     })
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        return res
-          .status(403)
-          .send({ message: "No autorizado para eliminar esta tarjeta" });
+        return res.status(403).send({
+          message: "Not authorized to delete this card",
+        });
       }
       return Card.findByIdAndDelete(req.params.cardId).then(() =>
-        res.send({ message: "Tarjeta eliminada" }),
+        res.send({ message: "Card deleted" }),
       );
     })
     .catch((err) => {
@@ -50,11 +48,11 @@ const deleteCard = (req, res) => {
         return res.status(404).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "ID de tarjeta inválido" });
+        return res.status(400).send({ message: "Invalid card id" });
       }
       return res
         .status(500)
-        .send({ message: "Error del servidor al eliminar tarjeta" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 
@@ -66,7 +64,7 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new Error("tarjeta no encontrada");
+      const error = new Error("Card not found");
       error.statusCode = 404;
       throw error;
     })
@@ -76,11 +74,11 @@ const likeCard = (req, res) => {
         return res.status(404).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "ID de tarjeta invalido" });
+        return res.status(400).send({ message: "Invalid car id" });
       }
       return res
         .status(500)
-        .send({ message: "error del servidor al darle like" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 
@@ -92,7 +90,7 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new Error("tarjeta no encontrada");
+      const error = new Error("Card not found");
       error.statusCode = 404;
       throw error;
     })
@@ -102,11 +100,11 @@ const dislikeCard = (req, res) => {
         return res.status(404).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "ID de tarjeta invalido" });
+        return res.status(400).send({ message: "Invalid card id" });
       }
       return res
         .status(500)
-        .send({ message: "error del servidor al eliminar el like" });
+        .send({ message: "An error has ocurred on the server" });
     });
 };
 
